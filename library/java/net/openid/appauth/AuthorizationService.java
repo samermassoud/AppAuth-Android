@@ -158,6 +158,21 @@ public class AuthorizationService {
     }
 
     /**
+     * Does exactly the same as performAuthorizationRequest(AuthorizationRequest request,
+     * PendingIntent completedIntent), but instead of starting the activity, it returns
+     * the intent which would be started.
+     */
+    public Intent getAuthorizationRequestIntent(
+        @NonNull AuthorizationRequest request,
+        @NonNull PendingIntent completedIntent) {
+        return getAuthorizationRequestIntent(
+            request,
+            completedIntent,
+            null,
+            createCustomTabsIntentBuilder().build());
+    }
+
+    /**
      * Sends an authorization request to the authorization service, using a
      * [custom tab](https://developer.chrome.com/multidevice/android/customtabs)
      * if available, or a browser instance.
@@ -177,6 +192,24 @@ public class AuthorizationService {
                 canceledIntent,
                 createCustomTabsIntentBuilder().build());
     }
+
+    /**
+     * Does exactly the same as performAuthorizationRequest(AuthorizationRequest request,
+     * PendingIntent completedIntent, PendingIntent canceledIntent), but instead of starting the
+     * activity, it returns the intent which would be started.
+     */
+    public Intent getAuthorizationRequestIntent(
+        @NonNull AuthorizationRequest request,
+        @NonNull PendingIntent completedIntent,
+        @NonNull PendingIntent canceledIntent) {
+        return getAuthorizationRequestIntent(
+            request,
+            completedIntent,
+            canceledIntent,
+            createCustomTabsIntentBuilder().build());
+    }
+
+
 
     /**
      * Sends an authorization request to the authorization service, using a
@@ -200,6 +233,23 @@ public class AuthorizationService {
                 completedIntent,
                 null,
                 customTabsIntent);
+    }
+
+
+    /**
+     * Does exactly the same as performAuthorizationRequest(AuthorizationRequest request,
+     * PendingIntent completedIntent, CustomTabsIntent customTabsIntent),
+     * but instead of starting the activity, it returns the intent which would be started.
+     */
+    public Intent getAuthorizationRequestIntent(
+        @NonNull AuthorizationRequest request,
+        @NonNull PendingIntent completedIntent,
+        @NonNull CustomTabsIntent customTabsIntent) {
+        return getAuthorizationRequestIntent(
+            request,
+            completedIntent,
+            null,
+            customTabsIntent);
     }
 
     /**
@@ -236,6 +286,30 @@ public class AuthorizationService {
                 authIntent,
                 completedIntent,
                 canceledIntent));
+    }
+
+    /**
+     * Does exactly the same as performAuthorizationRequest(AuthorizationRequest request,
+     * PendingIntent completedIntent, PendingIntent canceledIntent, CustomTabsIntent customTabsIntent),
+     * but instead of starting the activity, it returns the intent which would be started.
+     */
+    public Intent getAuthorizationRequestIntent(
+        @NonNull AuthorizationRequest request,
+        @NonNull PendingIntent completedIntent,
+        @Nullable PendingIntent canceledIntent,
+        @NonNull CustomTabsIntent customTabsIntent) {
+        checkNotDisposed();
+        checkNotNull(request);
+        checkNotNull(completedIntent);
+        checkNotNull(customTabsIntent);
+
+        Intent authIntent = prepareAuthorizationRequestIntent(request, customTabsIntent);
+        return AuthorizationManagementActivity.createStartIntent(
+            mContext,
+            request,
+            authIntent,
+            completedIntent,
+            canceledIntent);
     }
 
     /**
